@@ -1,0 +1,48 @@
+import tensorflow as tf
+import pandas as pd
+import numpy as np
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense,Conv2D,MaxPool2D,Flatten,Dropout,BatchNormalization,Activation
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import matplotlib.pyplot as plt
+from keras.preprocessing.image import load_img,img_to_array
+import random
+from tensorflow.keras import layers
+import matplotlib.image as mpimg
+import inspect
+from tqdm import tqdm
+import plotly.express as px
+#IMPORTING THE TRAIN, TEST and VALIDATION IMAGE SETS
+# target=(64,64) or (75,75) or (331,331)
+def image_import (target):
+    train_datagen = ImageDataGenerator(rescale = 1./255,shear_range = 0.2,zoom_range = 0.2,horizontal_flip = True)
+    train_set = train_datagen.flow_from_directory('../input/100-bird-species/train', target_size = target,batch_size = 300,
+                                                 class_mode = 'categorical')
+    test_datagen = ImageDataGenerator(rescale = 1./255)
+    test_set = test_datagen.flow_from_directory('../input/100-bird-species/test',
+                                                 target_size = target,
+                                                 batch_size = 265,
+                                                 class_mode = 'categorical')
+    val_datagen = ImageDataGenerator(rescale = 1./255)
+    val_set = val_datagen.flow_from_directory('../input/100-bird-species/valid',
+                                                 target_size = target,
+                                                 batch_size = 265,
+                                                 class_mode = 'categorical')
+    return train_set,test_set,val_set
+    data=pd.read_csv('../input/100-bird-species/kagle-birds.csv',index_col=0)
+    #Total Number OF Class
+print("The total Classes in the dataset is {}".format(len(data.labels.value_counts())))
+#Visualizing the Images In Train set
+def display_random_grid(ncols=5, ds_path='../input/100-bird-species/train/'):
+    fig, ax = plt.subplots(ncols=ncols, nrows=ncols, figsize=(15, 15))
+    
+    for i in range(ncols):
+        for j in range(ncols):
+            bird_species = random.choice(os.listdir(ds_path))
+            random_bird_path = random.choice(os.listdir(ds_path + bird_species))
+            random_bird = mpimg.imread(ds_path + bird_species + '/' + random_bird_path)
+            ax[i, j].imshow(random_bird)
+            ax[i, j].set_title(bird_species)
+            ax[i, j].axis('off')
+            
+display_random_grid()
